@@ -1,5 +1,35 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model WebApplication1.Models.Entities.Transaction
+
 @{
+    ViewData["Title"] = "Order Confirmation";
 }
+
+<div class="container mt-4 text-center">
+    <div class="alert alert-success py-4">
+        <h1>🎉 Thank you for your order!</h1>
+        <p class="lead">Your receipt ID is: <strong>@Model.TransactionId</strong></p>
+    </div>
+
+    <div class="card my-4 text-start mx-auto" style="max-width: 600px;">
+        <div class="card-header bg-primary text-white">
+            <h5>Receipt Summary</h5>
+        </div>
+        <div class="card-body">
+            <p><strong>Date:</strong> @Model.TransactionDate.ToString("f")</p>
+            <p><strong>Customer:</strong> @Model.CustomerName (@Model.CustomerEmail)</p>
+
+            <hr />
+            <h6>Purchased Items:</h6>
+            <ul>
+                @foreach (var item in Model.Items)
+                {
+                    <li>@item.ProductName x @item.Quantity - $@item.Subtotal.ToString("F2")</li>
+                }
+            </ul>
+            <hr />
+            <h5>Total Paid: <span class="text-success">$@Model.TotalAmount.ToString("F2")</span></h5>
+        </div>
+    </div>
+
+    <a asp-controller="Product" asp-action="Index" class="btn btn-primary btn-lg">Return to Storefront</a>
+</div>

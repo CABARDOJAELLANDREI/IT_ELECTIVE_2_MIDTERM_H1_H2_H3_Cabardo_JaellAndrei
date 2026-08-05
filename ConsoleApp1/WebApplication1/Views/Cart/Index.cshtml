@@ -1,5 +1,102 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model WebApplication1.Models.Entities.ShoppingCart
+
 @{
+    ViewData["Title"] = "Shopping Bag";
 }
+
+<div class="container mt-4">
+    <h2 class="fw-extrabold mb-4"><i class="bi bi-bag-check-fill text-primary me-2"></i>Review Your Cart</h2>
+
+    @if (!Model.Items.Any())
+    {
+        <div class="card border-0 shadow-sm text-center py-5 rounded-4">
+            <div class="card-body">
+                <div class="bg-primary bg-opacity-10 text-primary p-4 rounded-circle d-inline-block mb-3">
+                    <i class="bi bi-cart-x display-4"></i>
+                </div>
+                <h4 class="fw-bold">Your shopping bag is empty</h4>
+                <p class="text-muted mb-4">Looks like you haven't selected any comic issues yet.</p>
+                <a asp-controller="Product" asp-action="Index" class="btn btn-brand px-4 py-2 rounded-pill">
+                    <i class="bi bi-arrow-left me-1"></i> Browse Comics Catalog
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            <!-- Items Table -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light">
+                                <tr class="text-uppercase text-muted small">
+                                    <th class="ps-4 py-3">Product Name</th>
+                                    <th class="py-3">Price</th>
+                                    <th class="py-3" style="width: 140px;">Qty</th>
+                                    <th class="py-3">Subtotal</th>
+                                    <th class="pe-4 py-3 text-end">Remove</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Items)
+                                {
+                                    <tr>
+                                        <td class="ps-4 fw-bold text-dark">@item.ProductName</td>
+                                        <td class="fw-semibold">$@item.UnitPrice.ToString("F2")</td>
+                                        <td>
+                                            <form asp-controller="Cart" asp-action="UpdateQuantity" method="post" class="d-flex gap-1">
+                                                <input type="hidden" name="ProductId" value="@item.ProductId" />
+                                                <input type="number" name="Quantity" value="@item.Quantity" min="1" class="form-control form-control-sm text-center fw-bold rounded-2" />
+                                                <button type="submit" class="btn btn-sm btn-light border" title="Update Quantity">
+                                                    <i class="bi bi-arrow-repeat"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                        <td class="fw-extrabold text-primary">$@item.Subtotal.ToString("F2")</td>
+                                        <td class="pe-4 text-end">
+                                            <form asp-controller="Cart" asp-action="RemoveItem" method="post">
+                                                <input type="hidden" name="ProductId" value="@item.ProductId" />
+                                                <button type="submit" class="btn btn-sm btn-outline-danger border-0 rounded-circle">
+                                                    <i class="bi bi-x-lg"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Summary Sidebar -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                    <h5 class="fw-bold mb-3">Summary</h5>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Total Quantity</span>
+                        <span class="fw-bold">@Model.Items.Sum(i => i.Quantity) items</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Estimated Shipping</span>
+                        <span class="text-success fw-bold">FREE</span>
+                    </div>
+                    <hr />
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <span class="fs-5 fw-bold">Total Pay</span>
+                        <span class="fs-3 fw-extrabold text-primary">$@Model.TotalAmount.ToString("F2")</span>
+                    </div>
+
+                    <a asp-controller="Checkout" asp-action="Index" class="btn btn-checkout btn-lg w-100 py-3 shadow-sm mb-2">
+                        Checkout Order <i class="bi bi-shield-lock-fill ms-1"></i>
+                    </a>
+                    <a asp-controller="Product" asp-action="Index" class="btn btn-light w-100 rounded-3 fw-bold text-muted">
+                        Keep Shopping
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

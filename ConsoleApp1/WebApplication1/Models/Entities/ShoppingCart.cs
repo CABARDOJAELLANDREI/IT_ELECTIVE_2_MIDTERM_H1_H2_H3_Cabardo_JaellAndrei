@@ -1,8 +1,11 @@
-﻿namespace IT_ELECTIVE_2_MIDTERM.Models.Entities
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace WebApplication1.Models.Entities
 {
     public class ShoppingCart
     {
         public List<CartItem> Items { get; set; } = new List<CartItem>();
-        public decimal GrandTotal => Items.Sum(item => item.LineTotal);
+        public decimal TotalAmount => Items.Sum(i => i.Subtotal);
     }
 }

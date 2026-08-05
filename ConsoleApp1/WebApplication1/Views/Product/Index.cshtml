@@ -1,0 +1,111 @@
+﻿@using WebApplication1.Models.Entities
+@model IEnumerable<Product>
+
+@{
+    ViewData["Title"] = "Comic Storefront";
+}
+
+<div class="container mt-4">
+    <!-- Hero Banner -->
+    <div class="p-5 mb-4 rounded-4 shadow-sm text-white position-relative overflow-hidden" style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);">
+        <div class="position-relative z-1 col-lg-8">
+            <span class="badge bg-warning text-dark fw-bold text-uppercase px-3 py-2 rounded-pill mb-3">🔥 Collector's Edition Sale</span>
+            <h1 class="display-4 fw-extrabold mb-2">Rare Comics & Graphic Novels</h1>
+            <p class="fs-5 text-light opacity-75 mb-4">Discover rare issues, first editions, and exclusive series. Reserve yours before stock runs out!</p>
+            <a href="#catalog" class="btn btn-warning btn-lg fw-bold px-4 py-2 rounded-pill shadow-sm">
+                Shop Catalog <i class="bi bi-arrow-down-short"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Alert Notifications -->
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger border-0 shadow-sm rounded-3 d-flex align-items-center mb-4" role="alert">
+            <i class="bi bi-exclamation-triangle-fill fs-5 me-2"></i>
+            <div>@TempData["Error"]</div>
+        </div>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success border-0 shadow-sm rounded-3 d-flex align-items-center mb-4" role="alert">
+            <i class="bi bi-check-circle-fill fs-5 me-2"></i>
+            <div>@TempData["Success"]</div>
+        </div>
+    }
+
+    <!-- Product Grid Header -->
+    <div id="catalog" class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-extrabold m-0">Featured Releases</h3>
+            <small class="text-muted">Showing available stock items in real-time</small>
+        </div>
+    </div>
+
+    <!-- Products -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var item in Model)
+        {
+            bool isOutOfStock = item.StockQuantity <= 0;
+            <div class="col">
+                <div class="comic-card h-100 d-flex flex-column p-4 border @(isOutOfStock ? "opacity-50" : "")">
+                    <!-- Top Info Tag -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge-pill-custom bg-light text-primary border border-primary border-opacity-25">
+                            Issue #@item.Id
+                        </span>
+                        @if (isOutOfStock)
+                        {
+                            <span class="badge-pill-custom bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">
+                                Sold Out
+                            </span>
+                        }
+                        else if (item.StockQuantity <= 3)
+                        {
+                            <span class="badge-pill-custom bg-warning bg-opacity-10 text-dark border border-warning">
+                                Only @item.StockQuantity Left!
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge-pill-custom bg-success bg-opacity-10 text-success border border-success border-opacity-25">
+                                In Stock (@item.StockQuantity)
+                            </span>
+                        }
+                    </div>
+
+                    <!-- Comic Title -->
+                    <h5 class="fw-bold text-dark mb-2">@item.Name</h5>
+
+                    <!-- Pricing -->
+                    <div class="my-3">
+                        <span class="fs-3 fw-extrabold text-primary">${@item.Price.ToString("F2")}</span>
+                        <small class="text-muted ms-1">USD</small>
+                    </div>
+
+                    <!-- Action -->
+                    <div class="mt-auto pt-3 border-top">
+                        @if (!isOutOfStock)
+                        {
+                            <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                                <input type="hidden" name="ProductId" value="@item.Id" />
+                                <div class="d-flex gap-2">
+                                    <input type="number" name="Quantity" value="1" min="1" max="@item.StockQuantity" class="form-control text-center fw-bold rounded-3" style="width: 70px;" />
+                                    <button type="submit" class="btn btn-brand flex-grow-1 shadow-sm">
+                                        <i class="bi bi-cart-plus-fill me-1"></i> Add To Cart
+                                    </button>
+                                </div>
+                            </form>
+                        }
+                        else
+                        {
+                            <button class="btn btn-light text-muted w-100 fw-bold rounded-3" disabled>
+                                Out of Stock
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

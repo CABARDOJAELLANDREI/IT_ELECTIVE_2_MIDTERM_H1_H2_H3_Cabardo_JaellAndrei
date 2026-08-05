@@ -1,5 +1,61 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model IEnumerable<WebApplication1.Models.Entities.Transaction>
+
 @{
+    ViewData["Title"] = "Sales History";
 }
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0"><i class="bi bi-clock-history me-2 text-primary"></i>Sales History</h2>
+        <a asp-controller="Product" asp-action="Index" class="btn btn-outline-primary">
+            <i class="bi bi-plus-lg me-1"></i> New Order
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="card border-0 shadow-sm text-center py-5">
+            <div class="card-body">
+                <i class="bi bi-receipt display-1 text-muted mb-3 d-block"></i>
+                <h4 class="text-secondary">No transactions recorded yet</h4>
+                <p class="text-muted">Completed purchases will appear here automatically.</p>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card border-0 shadow-sm">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Receipt Ref</th>
+                            <th>Date & Time</th>
+                            <th>Customer Name</th>
+                            <th>Total Spent</th>
+                            <th class="text-end pe-4">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var t in Model)
+                        {
+                            <tr>
+                                <td class="ps-4 font-monospace text-primary fw-bold">
+                                    #@t.TransactionId.ToString().Substring(0, 8)
+                                </td>
+                                <td>@t.TransactionDate.ToString("g")</td>
+                                <td class="fw-semibold text-dark">@t.CustomerName</td>
+                                <td class="fw-bold text-success">$@t.TotalAmount.ToString("F2")</td>
+                                <td class="text-end pe-4">
+                                    <a asp-controller="Checkout" asp-action="Details" asp-route-id="@t.TransactionId" class="btn btn-sm btn-outline-info">
+                                        <i class="bi bi-eye-fill me-1"></i> View Details
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

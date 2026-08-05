@@ -1,12 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace WebApplication1.Models.DTOs
+﻿namespace WebApplication1.Models.DTOs
 {
-    public class UpdateCartDTO : Controller
+    public class UpdateCartDTO
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        public int ProductId { get; set; }
+        public int Quantity { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace IT_ELECTIVE_2_MIDTERM.Models.Entities
+﻿namespace WebApplication1.Models.Entities
 {
     public class Product
     {
